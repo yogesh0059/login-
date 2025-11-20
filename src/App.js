@@ -1,17 +1,9 @@
-// src/App.js me pura paste karde
+// login/src/App.js mein pura paste kar de
 
 import React, { useState } from "react";
 
-const DUMMY_USER = {
-  username: "admin",
-  password: "1234"
-};
-
 function App() {
-  const [form, setForm] = useState({
-    username: "",
-    password: ""
-  });
+  const [form, setForm] = useState({ username: "", password: "" });
   const [msg, setMsg] = useState("");
   const [success, setSuccess] = useState(null);
 
@@ -24,22 +16,26 @@ function App() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (
-      form.username === DUMMY_USER.username &&
-      form.password === DUMMY_USER.password
-    ) {
-      setMsg("✅ Login successful!");
-      setSuccess(true);
-    } else {
-      setMsg("❌ Invalid credentials");
-      setSuccess(false);
-    }
+    fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    })
+      .then(res => res.json())
+      .then(data => {
+        setMsg(data.success ? "✅ Login successful!" : "❌ Invalid credentials");
+        setSuccess(data.success);
+      })
+      .catch(() => {
+        setMsg("Server error!");
+        setSuccess(false);
+      });
   }
 
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg,#6a11cb,#2575fc)",
+      background: "linear-gradient(135deg,#11998e,#38ef7d 60%,#0575e6 100%)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
@@ -47,20 +43,21 @@ function App() {
       <form
         onSubmit={handleSubmit}
         style={{
-          background: "#fff",
-          padding: "32px 28px",
-          borderRadius: 16,
-          boxShadow: "0 6px 24px rgba(81,90,232,.10)",
-          minWidth: 320,
+          background: "#f9f9f9",
+          padding: "35px 30px",
+          borderRadius: 18,
+          boxShadow: "0 6px 32px rgba(34,193,195,.15)",
+          minWidth: 330,
           display: "flex",
           flexDirection: "column",
         }}
       >
         <h2 style={{
           textAlign: "center",
-          color: "#2575fc",
+          color: "#FF5722",
           fontWeight: 700,
-          marginBottom: 20
+          letterSpacing: 2,
+          marginBottom: 18
         }}>Login</h2>
 
         <input
@@ -70,12 +67,14 @@ function App() {
           value={form.username}
           onChange={handleChange}
           style={{
-            marginBottom: 12,
-            padding: "9px 12px",
+            marginBottom: 13,
+            padding: "10px 14px",
             fontSize: 16,
-            borderRadius: 7,
-            border: "1px solid #ccd",
-            outline: "none"
+            borderRadius: 9,
+            border: "1.5px solid #aee1db",
+            outline: "none",
+            background: "#fff",
+            boxShadow: "0 0.5px 4px rgba(20,220,120,0.03)"
           }}
           autoComplete="off"
           required
@@ -87,12 +86,14 @@ function App() {
           value={form.password}
           onChange={handleChange}
           style={{
-            marginBottom: 15,
-            padding: "9px 12px",
+            marginBottom: 16,
+            padding: "10px 14px",
             fontSize: 16,
-            borderRadius: 7,
-            border: "1px solid #ccd",
-            outline: "none"
+            borderRadius: 9,
+            border: "1.5px solid #aee1db",
+            outline: "none",
+            background: "#fff",
+            boxShadow: "0 0.5px 4px rgba(20,220,120,0.03)"
           }}
           required
         />
@@ -101,13 +102,14 @@ function App() {
           style={{
             padding: "10px 0",
             border: "none",
-            borderRadius: 7,
-            background: "#2575fc",
-            color: "#fff",
+            borderRadius: 9,
+            background: "linear-gradient(90deg,#ff9800,#ffe259)",
+            color: "#33280d",
             fontWeight: "bold",
             fontSize: 17,
             cursor: "pointer",
-            boxShadow: "0 1px 10px rgba(81,90,232,.10)"
+            boxShadow: "0 1px 10px rgba(255,152,0,0.13)",
+            transition: "background 0.2s"
           }}
         >
           Login
@@ -116,7 +118,10 @@ function App() {
         {msg &&
           <div style={{
             marginTop: 18,
-            color: success ? "green" : "red",
+            color: success ? "#28a745" : "#e53935",
+            background: success ? "#dafbe1" : "#ffe4e6",
+            borderRadius: 6,
+            padding: "7px 0",
             textAlign: "center",
             fontWeight: 500,
             fontSize: 16
